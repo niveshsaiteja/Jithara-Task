@@ -1,0 +1,41 @@
+
+.main-cont{
+    padding: 50px;
+    margin: 50px;
+}
+
+
+.items-container{
+    display: flex;
+    flex-direction: column;
+    
+    justify-content: center;
+    align-items: center;
+}
+.bold{
+    font-weight: bold;
+    background-color: rgb(255, 249, 208);
+}
+
+.search-cont{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    padding: 50px;
+}
+
+.search-bar{
+    padding: 10px;
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 5px;
+    width: 50%;
+
+}
+.sort-bar{
+    padding: 10px;
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 5px;
+    width: 25%;
+}
