@@ -9,8 +9,12 @@ class Customer extends Component{
     state={
         inputValue:'',
         sortBy:'',
-        customerDetails:[]
+        customerDetails:[],
+        currentPage:1,
     }
+
+    
+
 
     componentDidMount(){
         this.getData('http://localhost:8000/customer/get-customers');
@@ -54,15 +58,49 @@ class Customer extends Component{
             sortBy:value,
         })
     }
+
+
+    prePage=()=>{
+        const {currentPage} = this.state
+        if(currentPage !== 1){
+            this.setState((prevState)=>({
+                currentPage:prevState.currentPage -1 ,
+            }))
+        }
+    }
+
+    nextPage=()=>{
+        const {currentPage} = this.state
+        if(currentPage !== 3){
+            this.setState((prevState)=>({
+                currentPage:prevState.currentPage +1 ,
+            }))
+        }
+    }
+
+    changeCPage=(id)=>{
+        this.setState({
+            currentPage:id,
+        })
+    }
+
+
     
 
     render(){
 
-        const {inputValue,sortBy,customerDetails} = this.state
+        const {inputValue,sortBy,customerDetails,currentPage} = this.state
         let SearchList = customerDetails.filter((obj)=>obj.customerName.toLowerCase().includes(inputValue.toLowerCase()) || obj.location.toLowerCase().includes(inputValue.toLowerCase()))
         if(sortBy!=''){
             this.getData(`http://localhost:8000/customer/get-customers-by${sortBy}`);
         }
+
+        const recordsPerPage = 20;
+        const lastIndex = currentPage*recordsPerPage;
+        const firstIndex = lastIndex-recordsPerPage;
+        const records = SearchList.length === 0 ? customerDetails.slice(firstIndex,lastIndex) : SearchList.slice(firstIndex,lastIndex)
+        const npage = Math.ceil(SearchList.length === 0 ? customerDetails.length/recordsPerPage : SearchList.length/recordsPerPage)
+        const numbers = [...Array(npage+1).keys()].slice(1)
 
         return(
             <div className='main-cont'>
@@ -86,12 +124,29 @@ class Customer extends Component{
             <span>Time</span>
             </li>
                 
-                {SearchList.length ===0? (customerDetails.map(obj=>(
+                {SearchList.length ===0? (records.map(obj=>(
                     <RowData key={obj.id} returnObject = {obj}/>
-                ))):(SearchList.map(obj=>(
+                ))):(records.map(obj=>(
                     <RowData key={obj.id} returnObject = {obj}/>
                 )))}
             </div>
+            <nav className='navbar'>
+                <ul className='pagination'>
+                    <li className='page-item'>
+                        <a href='#' className='page-link' onClick={this.prePage}>Prev</a>
+                    </li>
+                    {
+                        numbers.map((n,i)=>(
+                            <li className={`page-link ${currentPage === n ? 'active ' : ''}`} key={i}>
+                                <a href='#' className={`page-item ${currentPage === n ? 'text-white' : ''}`} onClick={()=> this.changeCPage(n)}>{n}</a>
+                            </li>
+                        ))
+                    }
+                    <li className='page-item'>
+                        <a href="#" className='page-link' onClick={this.nextPage}>Next</a>
+                    </li>
+                </ul>
+            </nav>
             </div>
         )
     }
