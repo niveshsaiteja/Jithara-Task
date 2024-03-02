@@ -13,12 +13,12 @@ class Customer extends Component{
     }
 
     componentDidMount(){
-        this.getData();
+        this.getData('http://localhost:8000/customer/get-customers');
     }
 
-    getData= async ()=>{
+    getData= async (url)=>{
         
-          const response = await axios.get('http://localhost:8000/customer/get-customers');
+          const response = await axios.get(url);
           
            const fetchedData = response.data.customers
         if (response.status === 200) {
@@ -51,7 +51,7 @@ class Customer extends Component{
     onChangeSortByOption=(event)=>{
         const value = event.target.value;
         this.setState({
-            sortBy:value
+            sortBy:value,
         })
     }
     
@@ -59,13 +59,17 @@ class Customer extends Component{
     render(){
 
         const {inputValue,sortBy,customerDetails} = this.state
-        let SearchList = customerDetails.filter((obj)=>obj.customerName.toLowerCase().includes(inputValue.toLocaleLowerCase() || obj.location.toLowerCase().includes(inputValue.toLocaleLowerCase())))
-       
+        let SearchList = customerDetails.filter((obj)=>obj.customerName.toLowerCase().includes(inputValue.toLowerCase()) || obj.location.toLowerCase().includes(inputValue.toLowerCase()))
+        if(sortBy!=''){
+            this.getData(`http://localhost:8000/customer/get-customers-by${sortBy}`);
+        }
+
         return(
             <div className='main-cont'>
+                <h1 className='heading'>PERN Application</h1>
             <div className='search-cont'>
-                <input className='search-bar' type="search" onChange={this.onChangeInputValue} value={inputValue} />
-                <select className='sort-bar' value={sortBy} >
+                <input placeholder='Search here' className='search-bar' type="search" onChange={this.onChangeInputValue} value={inputValue} />
+                <select className='sort-bar' value={sortBy}  onChange={this.onChangeSortByOption}>
                     <option value=''>Default</option>
                     <option value="date">sort by Date</option>
                     <option value="time">sort by time</option>
@@ -78,8 +82,8 @@ class Customer extends Component{
             <span>Age</span>
             <span>Number</span>
             <span>location</span>
-            <span>created at Date</span>
-            <span>created at Time</span>
+            <span>Date</span>
+            <span>Time</span>
             </li>
                 
                 {SearchList.length ===0? (customerDetails.map(obj=>(

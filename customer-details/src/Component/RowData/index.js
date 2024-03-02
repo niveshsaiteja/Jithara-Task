@@ -11,7 +11,8 @@ const {customerName,id,age,location,phoneNumber,createdDate,createdTime} = retur
             <span>{age}</span>
             <span>{phoneNumber}</span>
             <span>{location}</span>
-            <span>{createdDate}</span>
+            <span>{createdDate.slice(0,10)}</span>
+            {console.log(typeof(createdDate))}
             <span>{createdTime}</span>
         </li>
     )
